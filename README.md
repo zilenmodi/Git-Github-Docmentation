@@ -684,7 +684,7 @@ Following are the types of VCS:
     ```
     zilen@sf-cpu-438:~/Desktop/notes$ git diff master feature
     ```
-    - Track the changes between two commits - `git diff c1 c2`
+- Track the changes between two commits - `git diff c1 c2`
     
     ```
     zilen@sf-cpu-438:~/Desktop/notes$ git diff 974553a6c20e7416e34e4cf34b984727bf4e0eb9 3e39ef51fc1f84de8b605f3c78cc1935b34dab1e
