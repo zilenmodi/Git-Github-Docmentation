@@ -613,3 +613,111 @@ Following are the types of VCS:
 - Drop with stash index `git stash drop stash@{index}`
 - Clear stash `git stash clear`
 - Create new branch with all the things in stash. `git stash branch <name>`
+
+## Difference
+
+### Basics
+
+- Track the changes that have not been staged - `git diff`
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ git diff
+    diff --git a/README.md b/README.md
+    index 29e1836..4b7719e 100644
+    --- a/README.md
+    +++ b/README.md
+    @@ -235,3 +235,381 @@ Following are the types of VCS:
+         - BLOB identifiers.
+         - Path names.
+         - Metadata of all files in that directory.
+    +    ^M
+    +## Git Configuration^M
+    +^M
+    +### Git Configuration^M
+    +^M
+    diff --git a/README.md b/README.md
+    index 29e1836..4b7719e 100644
+    --- a/README.md
+    +++ b/README.md
+    @@ -235,3 +235,381 @@ Following are the types of VCS:
+         - BLOB identifiers.
+         - Path names.
+         - Metadata of all files in that directory.
+    +    ^M
+    +## Git Configuration^M
+    +^M
+    +### Git Configuration^M
+    +^M
+    +- **Git config**^M
+    +    ^M
+    +    Get and set configuration variables that control all facets of how Git looks and operates.^M
+    ```
+    
+- Track the changes that have staged but not committed - `git diff --staged`
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ git add .
+    zilen@sf-cpu-438:~/Desktop/notes$ git diff --staged
+    diff --git a/README.md b/README.md
+    index 29e1836..4b7719e 100644
+    --- a/README.md
+    +++ b/README.md
+    @@ -235,3 +235,381 @@ Following are the types of VCS:
+         - BLOB identifiers.
+         - Path names.
+         - Metadata of all files in that directory.
+    +    ^M
+    +## Git Configuration^M
+    +^M
+    +### Git Configuration^M
+    +^M
+    +- **Git config**^M
+    +    ^M
+    +    Get and set configuration variables that control all facets of how Git looks and operates.^M
+    +    ^M
+    +- **Set the name**^M
+    +    ^M
+    ```
+    
+- Git Diff Branches - `git diff <branch 2>`
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ git diff master feature
+    ```
+    - Track the changes between two commits - `git diff c1 c2`
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ git diff 974553a6c20e7416e34e4cf34b984727bf4e0eb9 3e39ef51fc1f84de8b605f3c78cc1935b34dab1e
+    diff --git a/README.md b/README.md
+    index 29e1836..c1657e1 100644
+    --- a/README.md
+    +++ b/README.md
+    
+    +    ^M
+    +## Git Configuration^M
+    +^M
+    +### Git Configuration^M
+    +^M
+    +- **Git config**^M
+    +    ^M
+    +    Get and set configuration variables that control all facets of how Git looks and operates.^M
+    +    ^M
+    +- **Set the name**^M
+    +    ^M
+    +    `$ git config --global user.name "zilenmodi"`^M
+    +    ^M
+    +- **Set the email**^M
+    +    ^M
+    +    `$ git config --global user.email "zilen.m@simformsolutions.com"`^M
+    +    ^M
+    +^M
+    +### **Starting a project**^M
+    +^M
+    +- **Git initCreate a local repository**^M
+    +    ^M
+    +    `$ git init`^M
+    +    ^M
+    +- **Clone repository from url**^M
+    +    ^M
+    +    `$ git clone url`^M
+    ```
