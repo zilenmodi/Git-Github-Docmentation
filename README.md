@@ -815,3 +815,370 @@ Following are the types of VCS:
     To https://github.com/zilenmodi/Git-Github-Docmentation.git
      - [deleted]         f2
     ```
+    
+## Merge
+
+### Basics of merge
+
+- There are two branches **master** and **feature.**
+- We can see that we made some commits in both functionality and master branch, and merge them. It works as a pointer.
+- It will find a common base commit between branches. Once Git finds a shared base commit, it will create a new "merge commit." It combines the changes of each queued merge commit sequence.
+- To merge the specified commit to currently active branch - `git merge <commit-id>`
+- To merge the specified branch to currently active branch - `git merge <branch-name>`
+- **Fast Forward merge:** When f1 and f2 branch have same base point, then create 4 new file in f1 and do 4 commit for individual file created. then checkout f2 branch. f1,f2 → c1←c2←c3←c4  (head→f1).
+- Apply `git merge f1` , So it will not created new commit and do fast forward merge so now f1 and f2 points at same base point of c4 commit.
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ git merge f1
+    Updating 208ceb8..e972ef1
+    Fast-forward
+     file1 | 0
+     file2 | 0
+     file3 | 0
+     file4 | 0
+     4 files changed, 0 insertions(+), 0 deletions(-)
+     create mode 100644 file1
+     create mode 100644 file2
+     create mode 100644 file3
+     create mode 100644 file4
+    zilen@sf-cpu-438:~/Desktop/notes$ git diff f1 f2
+    ```
+    
+- To prevent fast forward merge then use `—no-ff`
+- It’s prevent ff and create new commit like “merge f1 and f2”
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ touch file5
+    zilen@sf-cpu-438:~/Desktop/notes$ git add .
+    zilen@sf-cpu-438:~/Desktop/notes$ git commit -m "created file5"
+    [f2 78c2398] created file5
+     1 file changed, 0 insertions(+), 0 deletions(-)
+     create mode 100644 file5
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ touch file6
+    zilen@sf-cpu-438:~/Desktop/notes$ git add .
+    zilen@sf-cpu-438:~/Desktop/notes$ git commit -m "created file6"
+    [f2 d730cb7] created file6
+     1 file changed, 0 insertions(+), 0 deletions(-)
+     create mode 100644 file6
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git checkout f1
+    Switched to branch 'f1'
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git merge f2 --no-ff
+    Merge made by the 'ort' strategy.
+     file5 | 0
+     file6 | 0
+     2 files changed, 0 insertions(+), 0 deletions(-)
+     create mode 100644 file5
+     create mode 100644 file6
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git show
+    commit 45f8b39ce377db25590a0811e233e22224ace001 (HEAD -> f1)
+    Merge: e972ef1 d730cb7
+    Author: zilenmodi <zilen.m@simformsolutions.com>
+    Date:   Wed Feb 15 18:45:40 2023 +0530
+    
+        Merge branch 'f2' into f1
+    ```
+    
+- Merge all commits then merge branch use `—squash`
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ git merge --squash f2
+    Squash commit -- not updating HEAD
+    ```
+    
+## Show, Head and Detached Head
+
+### Basics
+
+- The **HEAD** points out the last commit in the current checkout branch. It is like a pointer to any reference. The HEAD can be understood as the "**current branch**" When you switch branches with 'checkout,' the HEAD is transferred to the new branch.
+- It stores the status of Head in **.git\refs\heads** directory.
+- To see status of Head use - `git show` or `git show HEAD`
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ git show
+    commit be406475f71e269d897cf8bfa4db7f1af8e8cbc9 (HEAD -> f1)
+    Author: zilenmodi <zilen.m@simformsolutions.com>
+    Date:   Wed Feb 15 16:22:16 2023 +0530
+    
+        Added file1
+    
+    diff --git a/file1 b/file1
+    new file mode 100644
+    index 0000000..e69de29
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git show HEAD
+    commit be406475f71e269d897cf8bfa4db7f1af8e8cbc9 (HEAD -> f1)
+    Author: zilenmodi <zilen.m@simformsolutions.com>
+    Date:   Wed Feb 15 16:22:16 2023 +0530
+    
+        Added file1
+    
+    diff --git a/file1 b/file1
+    new file mode 100644
+    index 0000000..e69de29
+    ```
+    
+- We can also checkout particular commit along with it’s id whuch known as **detached head status**.
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ git checkout 9a13624e1d3ca9ad93a97d49726e735f2d919fe1
+    Note: switching to '9a13624e1d3ca9ad93a97d49726e735f2d919fe1'.
+    
+    **You are in 'detached HEAD' state.** You can look around, make experimental
+    changes and commit them, and you can discard any commits you make in this
+    state without impacting any branches by switching back to a branch.
+    
+    HEAD is now at 9a13624 deleted file1
+    ```
+    
+- When we do new commits with this head point and without pointing any branch and then move back to main branch, Then all commits became **dangling commits**.
+- To overcome we can create new branch at that commit called temporary and then rebase with main branch.
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ touch file4
+    zilen@sf-cpu-438:~/Desktop/notes$ git add .
+    zilen@sf-cpu-438:~/Desktop/notes$ git commit -m "created file4"
+    [detached HEAD e407fd1] created file4
+     1 file changed, 0 insertions(+), 0 deletions(-)
+     create mode 100644 file4
+    ```
+    
+    **Before Detached head: checkout 9a13**
+    
+    ```
+    **F1 pointing to be40**
+    
+    commit be406475f71e269d897cf8bfa4db7f1af8e8cbc9 (HEAD -> f1)
+    Author: zilenmodi <zilen.m@simformsolutions.com>
+    Date:   Wed Feb 15 16:22:16 2023 +0530
+    
+        Added file1
+    
+    commit 9a13624e1d3ca9ad93a97d49726e735f2d919fe1
+    Author: zilenmodi <zilen.m@simformsolutions.com>
+    Date:   Wed Feb 15 16:17:09 2023 +0530
+    
+        deleted file1
+    ```
+    
+    **After Detached head:** Created new file4 and commit
+    
+    ```
+    **Done commit on 9a13**
+    
+    commit e407fd14cc3a2c9704e5b252a6a681c7dff25050 (HEAD)
+    Author: zilenmodi <zilen.m@simformsolutions.com>
+    Date:   Wed Feb 15 16:47:22 2023 +0530
+    
+        created file4
+    
+    commit 9a13624e1d3ca9ad93a97d49726e735f2d919fe1
+    Author: zilenmodi <zilen.m@simformsolutions.com>
+    Date:   Wed Feb 15 16:17:09 2023 +0530
+    
+        deleted file1
+    ```
+    
+    ****************************After rebase -**************************** `git rebase f1`
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ git rebase f1
+    Successfully rebased and updated detached HEAD.
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git log
+    commit e972ef10df0e36e805e0e59534c7cce15477c0f5 **(HEAD)**
+    Author: zilenmodi <zilen.m@simformsolutions.com>
+    Date:   Wed Feb 15 16:47:22 2023 +0530
+    
+        created file4
+    
+    commit be406475f71e269d897cf8bfa4db7f1af8e8cbc9 **(f1)**
+    Author: zilenmodi <zilen.m@simformsolutions.com>
+    Date:   Wed Feb 15 16:22:16 2023 +0530
+    
+        Added file1
+    
+    commit 9a13624e1d3ca9ad93a97d49726e735f2d919fe1
+    Author: zilenmodi <zilen.m@simformsolutions.com>
+    Date:   Wed Feb 15 16:17:09 2023 +0530
+    
+        deleted file1
+    ```
+    
+- Even now, Head and f1 not pointing to same, So for that we have to merge using temp branch.
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ git status
+    HEAD detached from 9a13624
+    nothing to commit, working tree clean
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git branch tmp
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git checkout f1
+    Previous HEAD position was e972ef1 created file4
+    Switched to branch 'f1'
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ **git rebase tmp**
+    Successfully rebased and updated refs/heads/f1.
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git log
+    commit e972ef10df0e36e805e0e59534c7cce15477c0f5 **(HEAD -> f1, tmp)**
+    Author: zilenmodi <zilen.m@simformsolutions.com>
+    Date:   Wed Feb 15 16:47:22 2023 +0530
+    
+        created file4
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git branch -d tmp
+    Deleted branch tmp (was e972ef1).
+    ```
+    
+## Rebase
+
+### Basics
+
+- **Rebasing** is a process to reapply commits on top of another base trip. It is used to apply a sequence of commits from distinct branches into a final commit.
+- It is an alternative of git merge command. It is a linear process of merging.
+- Like, Do c1 and c2 commit on f3 then, Created new branch f4 and checkout same. then commit f1 and f2 on that bracnh.
+- Move to f3 branch and do c3 and c4 commit.
+- Then move to f4 branch and do rebase - `git rebase <branch-name>`
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ git checkout f3
+    Switched to branch 'f3'
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ touch file.txt
+    zilen@sf-cpu-438:~/Desktop/notes$ git add file.txt
+    zilen@sf-cpu-438:~/Desktop/notes$ git commit -m **"c1"**
+    [f3 3062c0b] c1
+     1 file changed, 1 insertion(+)
+     create mode 100644 file.txt
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git add file.txt
+    zilen@sf-cpu-438:~/Desktop/notes$ git commit -m **"c2"**
+    [f3 e49fe30] c2
+     1 file changed, 1 insertion(+)
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git checkout -b f4
+    Switched to a new branch 'f4'
+    zilen@sf-cpu-438:~/Desktop/notes$ git diff f3 f4
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git add file.txt
+    zilen@sf-cpu-438:~/Desktop/notes$ git commit -m **"f1"**
+    [f4 5580812] f1
+     1 file changed, 1 insertion(+)
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git add file.txt
+    zilen@sf-cpu-438:~/Desktop/notes$ git commit -m **"f2"**
+    [f4 40c86aa] f2
+     1 file changed, 1 insertion(+)
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git checkout f3
+    Switched to branch 'f3'
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git add file.txt
+    zilen@sf-cpu-438:~/Desktop/notes$ git commit -m **"c3"**
+    [f3 de1bd0d] c3
+     1 file changed, 1 insertion(+)
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git add file.txt
+    zilen@sf-cpu-438:~/Desktop/notes$ git commit -m **"c4"**
+    [f3 33ea32e] c4
+     1 file changed, 1 insertion(+)
+    
+    **zilen@sf-cpu-438:~/Desktop/notes$ git diff f3 f4
+    diff --git a/file.txt b/file.txt
+    index e649d90..3b73725 100644
+    --- a/file.txt
+    +++ b/file.txt
+    @@ -1,4 +1,4 @@
+     c1
+     c2
+    -c3
+    -c4
+    +f1
+    +f2**
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git checkout f4
+    Switched to branch 'f4'
+    
+    **zilen@sf-cpu-438:~/Desktop/notes$ git rebase f3
+    Auto-merging file.txt
+    CONFLICT (content): Merge conflict in file.txt**
+    ```
+    
+- If there are some conflicts in the branch, resolve them, and perform below commands to continue changes -
+    
+    `git status`
+    
+    `git rebase —continue`
+    
+- The above command is used to continue with the changes you made. If you want to skip the change, you can skip as follows -
+    
+    `git rebase —skip`
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ git add file.txt
+    zilen@sf-cpu-438:~/Desktop/notes$ git rebase --continue
+    [detached HEAD 95b3209] f1
+     1 file changed, 1 insertion(+)
+    Successfully rebased and updated refs/heads/f4.
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git log --oneline
+    2838537 (HEAD -> f4) f2
+    95b3209 f1
+    33ea32e (f3) c4
+    de1bd0d c3
+    e49fe30 c2
+    3062c0b c1
+    ```
+    
+
+![https://wac-cdn.atlassian.com/dam/jcr:c34c17d8-22fd-4df8-9ac6-474ae80bf0e0/02%20Usage.svg?cdnVersion=789](https://wac-cdn.atlassian.com/dam/jcr:c34c17d8-22fd-4df8-9ac6-474ae80bf0e0/02%20Usage.svg?cdnVersion=789)
+
+![https://wac-cdn.atlassian.com/dam/jcr:4e576671-1b7f-43db-afb5-cf8db8df8e4a/01%20What%20is%20git%20rebase.svg?cdnVersion=789](https://wac-cdn.atlassian.com/dam/jcr:4e576671-1b7f-43db-afb5-cf8db8df8e4a/01%20What%20is%20git%20rebase.svg?cdnVersion=789)
+
+- Merge commits, So use `git rebase -i <commit-id>`
+    
+    ```
+    zilen@sf-cpu-438:~/Desktop/notes$ git add file.txt
+    zilen@sf-cpu-438:~/Desktop/notes$ git commit -m "c1"
+    [f4 73a6d63] c1
+     1 file changed, 1 insertion(+), 6 deletions(-)
+    zilen@sf-cpu-438:~/Desktop/notes$ git add file.txt
+    zilen@sf-cpu-438:~/Desktop/notes$ git commit -m "c2"
+    [f4 7556dfb] c2
+     1 file changed, 1 insertion(+)
+    zilen@sf-cpu-438:~/Desktop/notes$ git add file.txt
+    zilen@sf-cpu-438:~/Desktop/notes$ git commit -m "c3"
+    [f4 1e37cb3] c3
+     1 file changed, 1 insertion(+)
+    zilen@sf-cpu-438:~/Desktop/notes$ git add file.txt
+    zilen@sf-cpu-438:~/Desktop/notes$ git commit -m "c4"
+    [f4 625ac3d] c4
+     1 file changed, 1 insertion(+)
+    zilen@sf-cpu-438:~/Desktop/notes$ git add file.txt
+    zilen@sf-cpu-438:~/Desktop/notes$ git commit -m "c5"
+    [f4 e1a7942] c5
+     1 file changed, 1 insertion(+)
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git log --oneline
+    e1a7942 (HEAD -> f4) c5
+    625ac3d c4
+    1e37cb3 c3
+    7556dfb c2
+    73a6d63 c1
+    
+    **zilen@sf-cpu-438:~/Desktop/notes$ git rebase -i 2838
+    [detached HEAD 7f279b3] Merged c2,c3,c4
+     Date: Thu Feb 16 11:24:15 2023 +0530
+     1 file changed, 3 insertions(+)
+    Successfully rebased and updated refs/heads/f4.**
+    
+    zilen@sf-cpu-438:~/Desktop/notes$ git log --oneline
+    0748f68 (HEAD -> f4) c5
+    7f279b3 Merged c2,c3,c4
+    73a6d63 c1
+    ```
